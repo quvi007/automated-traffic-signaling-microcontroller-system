@@ -45,7 +45,7 @@ void loop(){
     if (flagB) cnt--;
     flagB = false;
   }
-
+  if(cnt < 0 ) cnt = 0;
   if (cnt) digitalWrite(LED_PIN, HIGH);
   else digitalWrite(LED_PIN, LOW);
 }
