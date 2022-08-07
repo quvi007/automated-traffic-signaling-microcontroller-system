@@ -45,7 +45,13 @@ void loop(){
     if (flagB) cnt--;
     flagB = false;
   }
-
-  if (cnt) digitalWrite(LED_PIN, HIGH);
+  if (cnt < 0) cnt = 0;
+  if (cnt) {
+    digitalWrite(LED_PIN, HIGH);
+  }
   else digitalWrite(LED_PIN, LOW);
+//  Serial.println("FlagA: %d", flagA);
+//  Serial.println("FlagB: %d", flagB);
+  Serial.println(cnt);
+  
 }
