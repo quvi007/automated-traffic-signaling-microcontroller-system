@@ -144,6 +144,10 @@ struct Lane{
   }
   int get_count(){return cnt ; }
   int get_capacity() { return length-average_car_length*cnt; }
+  int get_traffic()
+  {
+    return average_car_length*cnt;
+  }
 };
 
 Lane lane1(TRIG_A,ECHO_A,TRIG_B,ECHO_B);
@@ -174,20 +178,75 @@ struct Controller{
 
       if( active_road == 1 ) {
         if( now-lane1.last_green > 5000) {
-          active_road = 3;
-          lane1.last_green = now ;
+          if(now-lane3.last_green>20000)
+          {
+             active_road = 2;
+             lane3.last_green = now ;
+          }
+          else if(now-lane5.last_green>20000)
+          {
+             active_road = 3;
+             lane5.last_green = now ;
+          }
+          else if(lane3.get_traffic()<lane2.get_capacity()+lane6.get_capacity() && now-lane3.last_green>now-lane5.last_green)
+          {
+             active_road = 2;
+             lane3.last_green = now ;
+          }
+          else if(lane5.get_traffic()<lane2.get_capacity()+lane4.get_capacity())
+          {
+             active_road = 3;
+             lane5.last_green = now ;
+          }         
+          
         }
       }
-      else if( active_road ==3 ){
+      else if( active_road ==2 ){
         if( now-lane3.last_green>5000){
-          active_road =5;
-          lane3.last_green=now;
+          if(now-lane1.last_green>20000)
+          {
+             active_road = 1;
+             lane1.last_green = now ;
+          }
+          else if(now-lane5.last_green>20000)
+          {
+             active_road = 3;
+             lane5.last_green = now ;
+          }
+          else if(lane1.get_traffic()<lane4.get_capacity()+lane6.get_capacity() && now-lane1.last_green>now-lane5.last_green)
+          {
+             active_road = 1;
+             lane3.last_green = now ;
+          }
+          else if(lane5.get_traffic()<lane2.get_capacity()+lane4.get_capacity())
+          {
+             active_road = 3;
+             lane5.last_green = now ;
+          }
         }
       }
       else {
         if( now -lane5.last_green>5000) {
-          active_road =1;
-          lane5.last_green=now;
+          if(now-lane1.last_green>20000)
+          {
+             active_road = 1;
+             lane1.last_green = now ;
+          }
+          else if(now-lane3.last_green>20000)
+          {
+             active_road = 2;
+             lane3.last_green = now ;
+          }
+          else if(lane1.get_traffic()<lane4.get_capacity()+lane6.get_capacity() && now-lane1.last_green>now-lane3.last_green)
+          {
+             active_road = 1;
+             lane3.last_green = now ;
+          }
+          else if(lane3.get_traffic()<lane2.get_capacity()+lane6.get_capacity())
+          {
+             active_road = 2;
+             lane3.last_green = now ;
+          }
         }
       }
 
@@ -195,16 +254,28 @@ struct Controller{
         digitalWrite(LED_PIN1,HIGH);
         digitalWrite(LED_PIN4,HIGH);
         digitalWrite(LED_PIN6,HIGH);
+        
+        digitalWrite(LED_PIN2,LOW);
+        digitalWrite(LED_PIN3,LOW);
+        digitalWrite(LED_PIN5,LOW);
       }
-      else if( active_road==3) {
+      else if( active_road==2) {
         digitalWrite(LED_PIN3,HIGH);
         digitalWrite(LED_PIN2,HIGH);
         digitalWrite(LED_PIN6,HIGH);
+
+        digitalWrite(LED_PIN4,LOW);
+        digitalWrite(LED_PIN1,LOW);
+        digitalWrite(LED_PIN5,LOW);
       }
       else {
         digitalWrite(LED_PIN5,HIGH);
         digitalWrite(LED_PIN2,HIGH);
         digitalWrite(LED_PIN4,HIGH);
+      
+        digitalWrite(LED_PIN6,LOW);
+        digitalWrite(LED_PIN1,LOW);
+        digitalWrite(LED_PIN3,LOW);
       }
     }
 };
@@ -228,7 +299,7 @@ void loop(){
   Serial.print(" lane6: "); 
   Serial.println(lane6.cnt); 
 
-//  Serial.println(lane1.get_count());
-  if (lane1.get_count()) digitalWrite(LED_PIN1, HIGH);
-  else digitalWrite(LED_PIN1, LOW);
+////  Serial.println(lane1.get_count());
+//  if (lane1.get_count()) digitalWrite(LED_PIN1, HIGH);
+//  else digitalWrite(LED_PIN1, LOW);
 }
