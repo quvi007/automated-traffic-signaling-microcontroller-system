@@ -71,6 +71,10 @@ void setup(){
 
   pinMode(LED_PIN2,OUTPUT);
   pinMode(LED_PIN1, OUTPUT);
+  pinMode(LED_PIN3,OUTPUT) ;
+  pinMode(LED_PIN4,OUTPUT) ;
+  pinMode(LED_PIN5,OUTPUT) ;
+  pinMode(LED_PIN6,OUTPUT) ;
 }
 
 struct sonar_sensor{
@@ -156,10 +160,10 @@ Lane lane6(TRIG_K,ECHO_K,TRIG_L,ECHO_L);
 
 struct Controller{
 
-    int active_road;
+    int active_road,prev;
     Controller(int x)
     {
-       active_road=x;
+       active_road=x;prev=0;
     }
     
     void run(){
@@ -170,52 +174,74 @@ struct Controller{
       lane5.run();
       lane6.run(); 
 
-      long now = millis() ;
-
+      long now = millis() ;      
       if( active_road == 1 ) {
         if( now-lane1.last_green > 5000) {
           active_road = 3;
-          lane1.last_green = now ;
+          lane3.last_green = now ;
         }
       }
       else if( active_road ==3 ){
         if( now-lane3.last_green>5000){
           active_road =5;
-          lane3.last_green=now;
+          lane5.last_green=now;
         }
       }
       else {
         if( now -lane5.last_green>5000) {
           active_road =1;
-          lane5.last_green=now;
+          lane1.last_green=now;
         }
       }
 
+      Serial.println(active_road);Serial.println(prev);
+      if(active_road!=prev){
+//         return;
       if( active_road == 1) {
         digitalWrite(LED_PIN1,HIGH);
         digitalWrite(LED_PIN4,HIGH);
         digitalWrite(LED_PIN6,HIGH);
+//        digitalWrite(LED_PIN4,LOW);
+//        digitalWrite(LED_PIN6,LOW);
+
+        digitalWrite(LED_PIN2,LOW);
+        digitalWrite(LED_PIN3,LOW);
+        digitalWrite(LED_PIN5,LOW);
       }
       else if( active_road==3) {
         digitalWrite(LED_PIN3,HIGH);
         digitalWrite(LED_PIN2,HIGH);
         digitalWrite(LED_PIN6,HIGH);
+//        digitalWrite(LED_PIN2,LOW);
+//        digitalWrite(LED_PIN6,LOW);
+        
+        digitalWrite(LED_PIN1,LOW);
+        digitalWrite(LED_PIN4,LOW);
+        digitalWrite(LED_PIN5,LOW);
       }
       else {
         digitalWrite(LED_PIN5,HIGH);
         digitalWrite(LED_PIN2,HIGH);
         digitalWrite(LED_PIN4,HIGH);
+//        digitalWrite(LED_PIN2,LOW);
+//        digitalWrite(LED_PIN4,LOW);
+        
+        digitalWrite(LED_PIN1,LOW);
+        digitalWrite(LED_PIN3,LOW);
+        digitalWrite(LED_PIN6,LOW);
       }
+      }
+      prev=active_road;
     }
 };
 
 Controller controller(1);
-
+int x=0;
 void loop(){
   
   controller.run();
-  
-  Serial.print("lane1: ");
+  Serial.print(x);x++;
+  Serial.print(" lane1: ");
   Serial.print(lane1.cnt);
   Serial.print(" lane2: ");
   Serial.print(lane2.cnt);
@@ -229,6 +255,6 @@ void loop(){
   Serial.println(lane6.cnt); 
 
 //  Serial.println(lane1.get_count());
-  if (lane1.get_count()) digitalWrite(LED_PIN1, HIGH);
-  else digitalWrite(LED_PIN1, LOW);
+//  if (lane1.get_count()) digitalWrite(LED_PIN1, HIGH);
+//  else digitalWrite(LED_PIN1, LOW);
 }

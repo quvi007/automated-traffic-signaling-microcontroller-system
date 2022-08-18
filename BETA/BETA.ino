@@ -71,6 +71,10 @@ void setup(){
 
   pinMode(LED_PIN2,OUTPUT);
   pinMode(LED_PIN1, OUTPUT);
+  pinMode(LED_PIN3,OUTPUT);
+  pinMode(LED_PIN4, OUTPUT);
+  pinMode(LED_PIN5,OUTPUT);
+  pinMode(LED_PIN6, OUTPUT);
 }
 
 struct sonar_sensor{
@@ -160,10 +164,10 @@ Lane lane6(TRIG_K,ECHO_K,TRIG_L,ECHO_L);
 
 struct Controller{
 
-    int active_road;
+    int active_road,prev;
     Controller(int x)
     {
-       active_road=x;
+       active_road=x;prev=0;
     }
     
     void run(){
@@ -181,22 +185,22 @@ struct Controller{
           if(now-lane3.last_green>20000)
           {
              active_road = 2;
-             lane3.last_green = now ;
+             lane3.last_green = now ;lane1.last_green = now ;
           }
           else if(now-lane5.last_green>20000)
           {
              active_road = 3;
-             lane5.last_green = now ;
+             lane5.last_green = now ;lane1.last_green = now ;
           }
           else if(lane3.get_traffic()<lane2.get_capacity()+lane6.get_capacity() && now-lane3.last_green>now-lane5.last_green)
           {
              active_road = 2;
-             lane3.last_green = now ;
+             lane3.last_green = now ;lane1.last_green = now ;
           }
           else if(lane5.get_traffic()<lane2.get_capacity()+lane4.get_capacity())
           {
              active_road = 3;
-             lane5.last_green = now ;
+             lane5.last_green = now ;lane1.last_green = now ;
           }         
           
         }
@@ -206,22 +210,22 @@ struct Controller{
           if(now-lane1.last_green>20000)
           {
              active_road = 1;
-             lane1.last_green = now ;
+             lane1.last_green = now ;lane3.last_green = now ;
           }
           else if(now-lane5.last_green>20000)
           {
              active_road = 3;
-             lane5.last_green = now ;
+             lane5.last_green = now ;lane3.last_green = now ;
           }
           else if(lane1.get_traffic()<lane4.get_capacity()+lane6.get_capacity() && now-lane1.last_green>now-lane5.last_green)
           {
              active_road = 1;
-             lane3.last_green = now ;
+             lane1.last_green = now ;lane3.last_green = now ;
           }
           else if(lane5.get_traffic()<lane2.get_capacity()+lane4.get_capacity())
           {
              active_road = 3;
-             lane5.last_green = now ;
+             lane5.last_green = now ;lane3.last_green = now ;
           }
         }
       }
@@ -230,26 +234,28 @@ struct Controller{
           if(now-lane1.last_green>20000)
           {
              active_road = 1;
-             lane1.last_green = now ;
+             lane1.last_green = now ;lane5.last_green = now ;
           }
           else if(now-lane3.last_green>20000)
           {
              active_road = 2;
-             lane3.last_green = now ;
+             lane3.last_green = now ;lane5.last_green = now ;
           }
           else if(lane1.get_traffic()<lane4.get_capacity()+lane6.get_capacity() && now-lane1.last_green>now-lane3.last_green)
           {
              active_road = 1;
-             lane3.last_green = now ;
+             lane1.last_green = now ;lane5.last_green = now ;
           }
           else if(lane3.get_traffic()<lane2.get_capacity()+lane6.get_capacity())
           {
              active_road = 2;
-             lane3.last_green = now ;
+             lane3.last_green = now ;lane5.last_green = now ;
           }
         }
       }
 
+      Serial.println(active_road);
+      if(active_road!=prev){
       if( active_road == 1) {
         digitalWrite(LED_PIN1,HIGH);
         digitalWrite(LED_PIN4,HIGH);
@@ -277,6 +283,8 @@ struct Controller{
         digitalWrite(LED_PIN1,LOW);
         digitalWrite(LED_PIN3,LOW);
       }
+      }
+      prev=active_road;
     }
 };
 
