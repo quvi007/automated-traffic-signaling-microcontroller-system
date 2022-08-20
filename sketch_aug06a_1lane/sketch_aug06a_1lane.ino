@@ -29,7 +29,7 @@ float SonarSensor(int TRIG_PIN, int ECHO_PIN) {
   float distance_cm = 0.017 * duration_us;
   return distance_cm;
 }
-
+int x=0;
 void loop(){
   distance_cm_A = SonarSensor(TRIG_A, ECHO_A);
   distance_cm_B = SonarSensor(TRIG_B, ECHO_B);
@@ -48,4 +48,5 @@ void loop(){
   if(cnt < 0 ) cnt = 0;
   if (cnt) digitalWrite(LED_PIN, HIGH);
   else digitalWrite(LED_PIN, LOW);
+  Serial.println(x);x++;
 }

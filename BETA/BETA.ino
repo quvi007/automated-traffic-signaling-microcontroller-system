@@ -79,7 +79,7 @@ void setup(){
 
 struct sonar_sensor{
    const int DELAY_MS = 100;
-   const int THRESHOLD_DIST_CM = 6;
+   const int THRESHOLD_DIST_CM = 5;
    bool flag ;
    bool in_flag ;
    bool out_flag ;
@@ -175,11 +175,11 @@ struct Controller{
       lane2.run();
       lane3.run();
       lane4.run();
-      lane5.run();
+//      lane5.run();
       lane6.run(); 
 
       long now = millis() ;
-
+      Serial.println(now);
       if( active_road == 1 ) {
         if( now-lane1.last_green > 5000) {
           if(now-lane3.last_green>20000)
@@ -289,12 +289,12 @@ struct Controller{
 };
 
 Controller controller(1);
-
+int x=0;
 void loop(){
   
   controller.run();
-  
-  Serial.print("lane1: ");
+  Serial.print(x);x++;
+  Serial.print(" lane1: ");
   Serial.print(lane1.cnt);
   Serial.print(" lane2: ");
   Serial.print(lane2.cnt);
